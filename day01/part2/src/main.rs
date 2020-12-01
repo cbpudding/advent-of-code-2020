@@ -1,4 +1,7 @@
-use ::std::{fs::File, io::{BufRead, BufReader}};
+use ::std::{
+	fs::File,
+	io::{BufRead, BufReader},
+};
 
 fn main() {
 	let input = File::open("data.txt").unwrap();
@@ -17,7 +20,7 @@ fn find_values(list: Vec<usize>) -> (usize, usize, usize) {
 		for j in (i + 1)..(list.len() - 1) {
 			for k in (j + 1)..(list.len() - 1) {
 				if list[i] + list[j] + list[k] == 2020 {
-					return (list[i], list[j], list[k])
+					return (list[i], list[j], list[k]);
 				}
 			}
 		}

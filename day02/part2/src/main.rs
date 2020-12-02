@@ -1,54 +1,59 @@
-use ::regex::Regex;
 use ::std::{
 	fs::File,
 	io::{BufRead, BufReader},
 };
 
-struct Password {
-	password: String,
-	first: usize,
-	second: usize,
-	victim: char,
-}
-
-impl Password {
-	fn is_valid(&self) -> bool {
-		let first = self.password.chars().nth(self.first - 1) == Some(self.victim);
-		let second = self.password.chars().nth(self.second - 1) == Some(self.victim);
-		first != second
-	}
-}
-
 fn main() {
 	let input = File::open("data.txt").unwrap();
 	let reader = BufReader::new(input);
-	let pattern = Regex::new(r"^(\d+)-(\d+) ([a-z]): ([a-z]+)$").unwrap();
-	let mut list = Vec::new();
 	let mut valid = 0;
 	for line in reader.lines() {
-		let line = line.unwrap();
-		let caps = pattern.captures(&line).unwrap();
-		list.push(Password {
-			password: caps.get(4).unwrap().as_str().to_string(),
-			first: caps
-				.get(2)
-				.unwrap()
-				.as_str()
-				.to_string()
-				.parse::<usize>()
-				.unwrap(),
-			second: caps
-				.get(1)
-				.unwrap()
-				.as_str()
-				.to_string()
-				.parse::<usize>()
-				.unwrap(),
-			victim: caps.get(3).unwrap().as_str().chars().nth(0).unwrap(),
-		});
-	}
-	for pass in list {
-		if pass.is_valid() {
+		let mut first = 0;
+		let mut password = String::new();
+		let mut second = 0;
+		let mut victim = '\0';
+		let mut stage = 0;
+		for c in line.unwrap().chars() {
+			if match stage {
+				0 => {
+					if c.is_digit(10) {
+						first = (first * 10) + c.to_digit(10).unwrap() as usize;
+						false
+					} else {
+						true
+					}
+				}
+				1 => {
+					if c.is_digit(10) {
+						second = (second * 10) + c.to_digit(10).unwrap() as usize;
+						false
+					} else {
+						true
+					}
+				}
+				2 => {
+					if victim == '\0' {
+						victim = c;
+						false
+					} else {
+						true
+					}
+				}
+				_ => {
+					if c.is_alphabetic() {
+						password.push(c);
+						false
+					} else {
+						false
+					}
+				}
+			} {
+				stage += 1;
+			}
+		}
+		let first_match = password.chars().nth(first) == Some(victim);
+		let second_match = password.chars().nth(second) == Some(victim);
+		if first_match != second_match {
 			valid += 1;
 		}
 	}

@@ -31,23 +31,23 @@ fn main() {
 				valid &= match *r {
 					"byr" => value
 						.parse::<usize>()
-						.map_or(false, |year| year >= 1920 && year <= 2002),
+						.map_or(false, |year| (1920..2002).contains(&year)),
 					"iyr" => value
 						.parse::<usize>()
-						.map_or(false, |year| year >= 2010 && year <= 2020),
+						.map_or(false, |year| (2010..2020).contains(&year)),
 					"eyr" => value
 						.parse::<usize>()
-						.map_or(false, |year| year >= 2020 && year <= 2030),
+						.map_or(false, |year| (2020..2030).contains(&year)),
 					"hgt" => {
 						let unit = &value[(value.len() - 2)..value.len()];
 						let measure = &value[..(value.len() - 2)];
 						match unit {
 							"cm" => measure
 								.parse::<usize>()
-								.map_or(false, |height| height >= 150 && height <= 193),
+								.map_or(false, |height| (150..193).contains(&height)),
 							"in" => measure
 								.parse::<usize>()
-								.map_or(false, |height| height >= 59 && height <= 76),
+								.map_or(false, |height| (59..76).contains(&height)),
 							_ => false,
 						}
 					}
@@ -69,7 +69,7 @@ fn main() {
 					"ecl" => EYE_COLORS.contains(&value.as_str()),
 					"pid" => value
 						.parse::<usize>()
-						.map_or(false, |id| id >= 100_000_000 && id <= 999_999_999),
+						.map_or(false, |id| (100_000_000..999_999_999).contains(&id)),
 					_ => true,
 				};
 			} else {

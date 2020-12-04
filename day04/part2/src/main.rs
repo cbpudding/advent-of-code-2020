@@ -1,11 +1,13 @@
 use ::std::{collections::HashMap, env, fs::File, io::Read};
 
+const EYE_COLORS: [&str; 7] = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+const REQUIRED: [&str; 7] = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
+
 fn main() {
 	let args: Vec<String> = env::args().collect();
 	let mut input = File::open(&args[1]).unwrap();
 	let mut buffer = String::new();
 	input.read_to_string(&mut buffer).unwrap();
-	let required = vec!["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
 	let passports: Vec<String> = buffer
 		.trim()
 		.split("\n\n")
@@ -23,49 +25,29 @@ fn main() {
 			fields.insert(key, value);
 		}
 		let keys: Vec<&String> = fields.keys().collect();
-		for r in &required {
+		for r in &REQUIRED {
 			if keys.contains(&&r.to_string()) {
 				let value = fields.get(&r.to_string()).unwrap();
 				valid &= match *r {
-					"byr" => {
-						if let Ok(year) = value.parse::<usize>() {
-							year >= 1920 && year <= 2002
-						} else {
-							false
-						}
-					}
-					"iyr" => {
-						if let Ok(year) = value.parse::<usize>() {
-							year >= 2010 && year <= 2020
-						} else {
-							false
-						}
-					}
-					"eyr" => {
-						if let Ok(year) = value.parse::<usize>() {
-							year >= 2020 && year <= 2030
-						} else {
-							false
-						}
-					}
+					"byr" => value
+						.parse::<usize>()
+						.map_or(false, |year| year >= 1920 && year <= 2002),
+					"iyr" => value
+						.parse::<usize>()
+						.map_or(false, |year| year >= 2010 && year <= 2020),
+					"eyr" => value
+						.parse::<usize>()
+						.map_or(false, |year| year >= 2020 && year <= 2030),
 					"hgt" => {
 						let unit = &value[(value.len() - 2)..value.len()];
 						let measure = &value[..(value.len() - 2)];
 						match unit {
-							"cm" => {
-								if let Ok(height) = measure.parse::<usize>() {
-									height >= 150 && height <= 193
-								} else {
-									false
-								}
-							}
-							"in" => {
-								if let Ok(height) = measure.parse::<usize>() {
-									height >= 59 && height <= 76
-								} else {
-									false
-								}
-							}
+							"cm" => measure
+								.parse::<usize>()
+								.map_or(false, |height| height >= 150 && height <= 193),
+							"in" => measure
+								.parse::<usize>()
+								.map_or(false, |height| height >= 59 && height <= 76),
 							_ => false,
 						}
 					}
@@ -84,17 +66,10 @@ fn main() {
 							false
 						}
 					}
-					"ecl" => {
-						["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&value.as_str())
-					}
-					"pid" => {
-						let mut valid = true;
-						valid &= value.len() == 9;
-						for c in value.chars() {
-							valid &= c.is_digit(10);
-						}
-						valid
-					}
+					"ecl" => EYE_COLORS.contains(&value.as_str()),
+					"pid" => value
+						.parse::<usize>()
+						.map_or(false, |id| id >= 100_000_000 && id <= 999_999_999),
 					_ => true,
 				};
 			} else {

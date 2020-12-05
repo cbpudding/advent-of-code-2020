@@ -28,26 +28,27 @@ fn main() {
 		for r in &REQUIRED {
 			if keys.contains(&&r.to_string()) {
 				let value = fields.get(&r.to_string()).unwrap();
+				let old = valid;
 				valid &= match *r {
 					"byr" => value
 						.parse::<usize>()
-						.map_or(false, |year| (1920..2002).contains(&year)),
+						.map_or(false, |year| (1920..2003).contains(&year)),
 					"iyr" => value
 						.parse::<usize>()
-						.map_or(false, |year| (2010..2020).contains(&year)),
+						.map_or(false, |year| (2010..2021).contains(&year)),
 					"eyr" => value
 						.parse::<usize>()
-						.map_or(false, |year| (2020..2030).contains(&year)),
+						.map_or(false, |year| (2020..2031).contains(&year)),
 					"hgt" => {
 						let unit = &value[(value.len() - 2)..value.len()];
 						let measure = &value[..(value.len() - 2)];
 						match unit {
 							"cm" => measure
 								.parse::<usize>()
-								.map_or(false, |height| (150..193).contains(&height)),
+								.map_or(false, |height| (150..194).contains(&height)),
 							"in" => measure
 								.parse::<usize>()
-								.map_or(false, |height| (59..76).contains(&height)),
+								.map_or(false, |height| (59..77).contains(&height)),
 							_ => false,
 						}
 					}
@@ -69,9 +70,12 @@ fn main() {
 					"ecl" => EYE_COLORS.contains(&value.as_str()),
 					"pid" => value
 						.parse::<usize>()
-						.map_or(false, |id| (100_000_000..999_999_999).contains(&id)),
+						.map_or(false, |id| id < 1_000_000_000) && value.len() == 9,
 					_ => true,
 				};
+				if valid != old {
+					println!("DEBUG: {} {}", r, value);
+				}
 			} else {
 				valid = false;
 			}

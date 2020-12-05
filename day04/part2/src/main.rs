@@ -68,9 +68,12 @@ fn main() {
 						}
 					}
 					"ecl" => EYE_COLORS.contains(&value.as_str()),
-					"pid" => value
-						.parse::<usize>()
-						.map_or(false, |id| id < 1_000_000_000) && value.len() == 9,
+					"pid" => {
+						value
+							.parse::<usize>()
+							.map_or(false, |id| id < 1_000_000_000)
+							&& value.len() == 9
+					}
 					_ => true,
 				};
 				if valid != old {

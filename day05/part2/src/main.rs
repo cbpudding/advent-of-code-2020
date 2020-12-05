@@ -1,4 +1,8 @@
-use ::std::{env, fs::File, io::{BufRead, BufReader}};
+use ::std::{
+	env,
+	fs::File,
+	io::{BufRead, BufReader},
+};
 
 fn main() {
 	let args: Vec<String> = env::args().collect();
@@ -13,7 +17,7 @@ fn main() {
 				'F' => id <<= 1,
 				'L' => id <<= 1,
 				'R' => id = (id << 1) | 1,
-				_ => panic!("Unknown character: {}", c)
+				_ => panic!("Unknown character: {}", c),
 			}
 		}
 		seats.push(id);

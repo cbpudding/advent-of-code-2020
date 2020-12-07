@@ -1,7 +1,7 @@
 use ::std::{
 	env,
 	fs::File,
-	io::{BufRead, BufReader}
+	io::{BufRead, BufReader},
 };
 
 fn main() {

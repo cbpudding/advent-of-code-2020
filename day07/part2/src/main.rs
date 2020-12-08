@@ -9,7 +9,6 @@ fn contains(hierarchy: &HashMap<String, Vec<(usize, String)>>, color: &String) -
 	let mut count = 1;
 	let bag = hierarchy.get(color).unwrap();
 	for c in bag {
-		println!("{} -> {}", color, c.1);
 		count += c.0 * contains(hierarchy, &c.1);
 	}
 	count

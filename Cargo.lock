@@ -111,3 +111,11 @@ version = "0.1.0"
 [[package]]
 name = "day15"
 version = "0.1.0"
+
+[[package]]
+name = "day16-part1"
+version = "0.1.0"
+
+[[package]]
+name = "day16-part2"
+version = "0.1.0"
